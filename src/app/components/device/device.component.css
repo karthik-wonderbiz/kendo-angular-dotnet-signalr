@@ -1,0 +1,32 @@
+.filter-container {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  padding: 10px;
+  background-color: rgb(77, 77, 77);
+  border-radius: 8px;
+  align-items: center;
+}
+
+.numeric-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: white;
+  padding: 6px;
+  border-radius: 3px;
+}
+
+.numeric-container label {
+  font-size: 14px;
+  font-weight: 500;
+  color: black;
+}
+
+.group{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 3px;
+}

@@ -1,0 +1,31 @@
+<div class="container">
+    <h3>Add New Raw Material</h3>
+    <form (ngSubmit)="createRawMaterial()" class="add-new-raw-material-form">
+      <kendo-textbox [(ngModel)]="newRawMaterial.name" name="name" placeholder="Name" title="name"></kendo-textbox>
+      <kendo-textbox [(ngModel)]="newRawMaterial.supplier" name="supplier" placeholder="Supplier"
+        title="supplier"></kendo-textbox>
+      <kendo-textbox [(ngModel)]="newRawMaterial.batchNumber" name="batchNumber" placeholder="Batch Number"
+        title="batchNumber"></kendo-textbox>
+      <kendo-numerictextbox [(ngModel)]="newRawMaterial.quantity" name="quantity" placeholder="Quantity"
+        title="quantity"></kendo-numerictextbox>
+      <kendo-textbox [(ngModel)]="newRawMaterial.qualityCheckStatus" name="qualityCheckStatus"
+        placeholder="Quality Check Status" title="qualityCheckStatus"></kendo-textbox>
+      <button kendoButton type="submit">Add</button>
+    </form>
+  
+  
+    <kendo-chart [transitions]="false">
+      <kendo-chart-title text="Raw Material Quantity Over Time"></kendo-chart-title>
+  
+      <kendo-chart-category-axis>
+        <kendo-chart-category-axis-item [categories]="categories" [title]="{ text: 'Time' }">
+        </kendo-chart-category-axis-item>
+      </kendo-chart-category-axis>
+  
+      <kendo-chart-series>
+        <kendo-chart-series-item type="line" [data]="seriesData" name="Quantity">
+        </kendo-chart-series-item>
+      </kendo-chart-series>
+    </kendo-chart>
+  
+  </div>

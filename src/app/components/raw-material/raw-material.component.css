@@ -1,0 +1,6 @@
+.add-new-raw-material-form{
+    display: grid !important;
+    grid-auto-flow: column;
+    gap: 12px;
+}
+
