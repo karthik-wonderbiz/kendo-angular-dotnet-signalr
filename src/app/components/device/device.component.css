@@ -30,3 +30,12 @@
   padding: 6px;
   border-radius: 3px;
 }
+
+.k-notification-group{
+  bottom: 10px!important;
+  right: 10px!important;
+}
+
+.k-notification > .k-notification-content {
+  font-size: 14px;
+}

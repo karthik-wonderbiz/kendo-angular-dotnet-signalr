@@ -1,5 +1,5 @@
 <div class="filter-container">
-  <div class="group">
+  <!-- <div class="group"> -->
     <kendo-formfield>
       <kendo-dropdownlist [(ngModel)]="filters.machine" [data]="machines" [defaultItem]="'Select Machine'">
       </kendo-dropdownlist>
@@ -9,9 +9,9 @@
       <kendo-dropdownlist [(ngModel)]="filters.property" [data]="properties" [defaultItem]="'Select Property'">
       </kendo-dropdownlist>
     </kendo-formfield>
-  </div>
+  <!-- </div> -->
 
-  <div class="group">
+  <!-- <div class="group"> -->
     <kendo-formfield>
       <kendo-datepicker [(ngModel)]="filters.startDate" placeholder="Start Date"></kendo-datepicker>
     </kendo-formfield>
@@ -19,7 +19,7 @@
     <kendo-formfield>
       <kendo-datepicker [(ngModel)]="filters.endDate" placeholder="End Date"></kendo-datepicker>
     </kendo-formfield>
-  </div>
+  <!-- </div> -->
 
   <!-- <div class="numeric-container">
     <label for="minValue">Min Value</label>
@@ -33,14 +33,14 @@
     </kendo-numerictextbox>
   </div> -->
 
-  <div class="group">
-    <button kendoButton (click)="resetFilters()" themeColor="secondary">
-      Reset Filters
-    </button>
-    <button kendoButton (click)="applyFilters()" themeColor="primary">
+  <!-- <div class="group"> -->
+    <button kendoButton (click)="applyFilters()" themeColor="primary" [svgIcon]="filterIcon">
       Apply Filters
     </button>
-  </div>
+    <button kendoButton (click)="resetFilters()" themeColor="secondary" [svgIcon]="filterClearIcon">
+      Reset Filters
+    </button>
+  <!-- </div> -->
 </div>
 
 <!--TABLE--------------------------------------------------->
@@ -52,22 +52,21 @@
     <kendo-grid-column field="value" title="Value"></kendo-grid-column>
     <kendo-grid-column field="timestamp" title="Timestamp"></kendo-grid-column>
   </kendo-grid>
-</div>
+</div>-->
 
-<kendo-chartwizard [data]="wizardData"> </kendo-chartwizard> -->
+<!-- <kendo-chartwizard [data]="wizardData"> </kendo-chartwizard> -->
 
-<!--STATISTICS--------------------------------------------------->
+<!--CHART--------------------------------------------------->
 <div *ngIf="deviceData.length > 0">
-  <kendo-chart  [transitions]="false" [categoryAxis]="{ categories: date, title: { text: 'Date' } }">
-    <!-- Chart Title -->
+  <kendo-chart [transitions]="false" [categoryAxis]="{ categories: date, title: { text: 'Date' } }">
     <kendo-chart-title [text]=columnChartTitle></kendo-chart-title>
-  
+
     <!-- Default Series Settings -->
     <kendo-chart-series-defaults type="column">
-      <kendo-chart-series-defaults-labels [visible]="true" format="{0}" position="outsideEnd">
+      <kendo-chart-series-defaults-labels [visible]="true" format="{0:n2}" position="outsideEnd">
       </kendo-chart-series-defaults-labels>
     </kendo-chart-series-defaults>
-  
+
     <!-- Series Data -->
     <kendo-chart-series>
       <kendo-chart-series-item [data]="minValue" name="Min Value" color="#4CAF50">
@@ -77,23 +76,59 @@
       <kendo-chart-series-item [data]="avgValue" name="Avg Value" color="#2196F3">
       </kendo-chart-series-item>
     </kendo-chart-series>
-  
+
     <!-- Value Axis with Title -->
     <kendo-chart-value-axis>
       <kendo-chart-value-axis-item [title]="{ text: 'Values' }">
       </kendo-chart-value-axis-item>
     </kendo-chart-value-axis>
-  
+
     <!-- Legend -->
     <kendo-chart-legend position="bottom"></kendo-chart-legend>
-  
-    <!-- Tooltip -->
-    <kendo-chart-tooltip format="{0}" [visible]="true"></kendo-chart-tooltip>
-  </kendo-chart>
-  
-  
 
-  <kendo-chart [categoryAxis]="{ categories: date }">
+    <!-- Tooltip -->
+    <kendo-chart-tooltip format="{0:n2}" [visible]="true"></kendo-chart-tooltip>
+  </kendo-chart>
+</div>
+
+<!-- <kendo-splitter orientation="vertical">
+  <kendo-splitter-pane>
+    <kendo-splitter>
+      <kendo-splitter-pane [collapsible]="true" size="30%">
+        <div class="pane-content">
+          <h3>Inner splitter / left pane</h3>
+          <p>Resizable and collapsible.</p>
+        </div>
+      </kendo-splitter-pane>
+      <kendo-splitter-pane>
+        <div class="pane-content">
+          <h3>Inner splitter / center pane</h3>
+          <p>Resizable only.</p>
+        </div>
+      </kendo-splitter-pane>
+      <kendo-splitter-pane [collapsible]="true" size="30%">
+        <div class="pane-content">
+          <h3>Inner splitter / right pane</h3>
+          <p>Resizable and collapsible.</p>
+        </div>
+      </kendo-splitter-pane>
+    </kendo-splitter>
+  </kendo-splitter-pane>
+  <kendo-splitter-pane size="100px">
+    <div class="pane-content">
+      <h3>Outer splitter / Middle pane</h3>
+      <p>Resizable only.</p>
+    </div>
+  </kendo-splitter-pane>
+  <kendo-splitter-pane [resizable]="false" size="100px">
+    <div class="pane-content">
+      <h3>Outer splitter / Bottom pane</h3>
+      <p>Non-resizable and non-collapsible.</p>
+    </div>
+  </kendo-splitter-pane>
+</kendo-splitter> -->
+
+  <!-- <kendo-chart [categoryAxis]="{ categories: date }">
     <kendo-chart-series-defaults type="bar">
       <kendo-chart-series-defaults-labels format="{0}">
       </kendo-chart-series-defaults-labels>
@@ -121,5 +156,4 @@
       <kendo-chart-series-item [data]="maxValue" [labels]="seriesLabels">
       </kendo-chart-series-item>
     </kendo-chart-series>
-  </kendo-chart>
-</div>
+  </kendo-chart> -->

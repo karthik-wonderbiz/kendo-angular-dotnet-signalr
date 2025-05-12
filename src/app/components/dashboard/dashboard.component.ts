@@ -24,9 +24,9 @@ export class DashboardComponent {
   public chartData: { timestamp: string, quantity: number }[] = [];
 
   constructor(
-    private rawMaterialService: RawMaterialService,
-    private signalRService: SignalRService,
-    private cdr: ChangeDetectorRef // For triggering UI updates
+    private readonly rawMaterialService: RawMaterialService,
+    private readonly signalRService: SignalRService,
+    private readonly cdr: ChangeDetectorRef // For triggering UI updates
   ) { }
 
   ngOnInit(): void {

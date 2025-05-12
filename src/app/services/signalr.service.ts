@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { API_ENDPOINTS } from '../constants/api.constants';
+import { Device } from '../model/device.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SignalRService {
-  private hubConnection: signalR.HubConnection;
+  private readonly hubConnection: signalR.HubConnection;
 
   constructor() {
     this.hubConnection = new signalR.HubConnectionBuilder()
@@ -25,32 +26,26 @@ export class SignalRService {
       .catch(err => console.log('Error while starting connection: ' + err));
   }
 
-  public refreshDevicesListener(callback: (devices: { id: string; machine: string; property: string; value: number; timestamp: string }[]) => void) {
-    this.hubConnection.on('refreshDevices', (data: { id: string; machine: string; property: string; value: number; timestamp: string }[]) => {
+  public refreshDevicesListener(callback: (devices: Device[]) => void) {
+    this.hubConnection.on('refreshDevices', (data: Device[]) => {
       console.log('[SignalR] Received refreshDevices event:', data);
-
-      // Ensure data is valid before processing
-      if (!Array.isArray(data) || data.length === 0) {
-        console.error('[SignalR] Received invalid data:', data);
-        return;
-      }
-
-      // Process and normalize data
+      // if (!Array.isArray(data) || data.length === 0) {
+      //   console.error('[SignalR] Received invalid data:', data);
+      //   return;
+      // }
       const formattedData = data.map(device => ({
         id: String(device.id),
         machine: device.machine,
         property: device.property,
-        value: Number(device.value), // Ensure value is a number
-        timestamp: new Date(device.timestamp).toISOString(), // Convert timestamp to ISO format
+        value: Number(device.value),
+        timestamp: new Date(device.timestamp).toISOString(),
       }));
-
-      // Pass the array of devices to the callback
       callback(formattedData);
     });
   }
 
 
-  
+
   public addReceiveItemUpdateListener = (callback: (id: number, name: string, supplier: string, batchNumber: string, quantity: number, qualityCheckStatus: string) => void) => {
     this.hubConnection.on('ReceiveItemUpdate', (id, name, supplier, batchNumber, quantity, qualityCheckStatus) => {
       // Call the callback to update the table

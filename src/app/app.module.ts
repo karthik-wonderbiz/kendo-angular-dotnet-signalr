@@ -13,18 +13,13 @@ import { ChartsModule } from "@progress/kendo-angular-charts";
 import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
 import { DropDownListModule } from '@progress/kendo-angular-dropdowns';
 import { KENDO_CHARTWIZARD } from "@progress/kendo-angular-chart-wizard";
-import {
-  ChartWizardDataRow,
-  DataColumn,
-  DataRow,
-  getWizardDataFromDataRows,
-} from "@progress/kendo-angular-chart-wizard";
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { RawMaterialComponent } from './components/raw-material/raw-material.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { DeviceComponent } from './components/device/device.component';
+import { LayoutModule } from '@progress/kendo-angular-layout';
 
 @NgModule({
   declarations: [
@@ -40,6 +35,7 @@ import { DeviceComponent } from './components/device/device.component';
     RouterModule,
     FormsModule,
 
+    LayoutModule,
     GridModule,
     InputsModule,
     ButtonModule,

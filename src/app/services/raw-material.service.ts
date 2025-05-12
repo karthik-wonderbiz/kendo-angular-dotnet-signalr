@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { API_ENDPOINTS } from '../constants/api.constants'; 
 import { RawMaterial } from '../model/raw-material.interface'; 
-import { catchError } from 'rxjs';
-import { throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +10,7 @@ import { throwError } from 'rxjs';
 export class RawMaterialService {
   private readonly apiUrl = API_ENDPOINTS.rawMaterial; 
 
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
 
   createRawMaterial(rawMaterial: RawMaterial): Observable<RawMaterial> {
     return this.http.post<RawMaterial>(this.apiUrl, rawMaterial);

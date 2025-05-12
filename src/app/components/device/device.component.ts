@@ -1,18 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { DeviceService } from '../../services/device.service';
 import { SignalRService } from '../../services/signalr.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Device } from '../../model/device.interface';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { ChartWizardDataRow, DataColumn, DataRow, getWizardDataFromDataRows } from '@progress/kendo-angular-chart-wizard';
-import { DailyDeviceStatistics } from '../../model/daily-device-statistics.interface';
+import { AggregateValues } from '../../model/aggregate-values.interface';
 import { SeriesLabels } from '@progress/kendo-angular-charts';
+import { filterClearIcon, filterIcon, SVGIcon } from '@progress/kendo-svg-icons';
 
 @Component({
   selector: 'app-device',
   templateUrl: './device.component.html',
   styleUrl: './device.component.css',
   standalone: false,
+  encapsulation: ViewEncapsulation.None,
 })
 export class DeviceComponent implements OnInit {
   public deviceData: Device[] = [];
@@ -44,43 +46,48 @@ export class DeviceComponent implements OnInit {
     font: "12px Arial, sans-serif",
   };
 
-  public columnChartTitle = `${this.filters.machine}'s ${this.filters.property} Value vs Date`
+  public columnChartTitle = '';
 
   constructor(
-    private deviceService: DeviceService,
-    private signalRService: SignalRService,
-    private notificationService: NotificationService
+    private readonly deviceService: DeviceService,
+    private readonly signalRService: SignalRService,
+    private readonly notificationService: NotificationService
   ) { }
 
+  private isSignalRSubscribed = false;
+  public filterIcon: SVGIcon = filterIcon;
+  public filterClearIcon: SVGIcon = filterClearIcon;
+
   ngOnInit(): void {
-    // Start SignalR connection for real-time updates.
     this.signalRService.startConnection();
 
-    // Listen for incoming device updates.
-    this.signalRService.refreshDevicesListener((devices) => {
-      this.deviceData = [...this.deviceData, ...devices];
-      this.updateGrid();
-      // Refresh chart data since daily statistics may change.
-      this.fetchAndUpdateWizardData();
-
-      this.notificationService.show({
-        content: `New Reading Updated`,
-        cssClass: 'button-notification',
-        animation: { type: 'fade', duration: 400 },
-        position: { horizontal: 'right', vertical: 'top' },
-        type: { style: 'info', icon: true },
-        hideAfter: 3000,
+    if (!this.isSignalRSubscribed) {
+      this.signalRService.refreshDevicesListener((devices) => {
+        this.deviceData = [...this.deviceData, ...devices];
+        this.updateGrid();
+        this.fetchAndUpdateWizardData();
+        this.notificationService.show({
+          content: `New Reading Updated`,
+          cssClass: 'button-notification',
+          animation: { type: 'fade', duration: 400 },
+          position: { horizontal: 'right', vertical: 'bottom' },
+          type: { style: 'info', icon: true },
+          hideAfter: 3000,
+        });
       });
+      this.isSignalRSubscribed = true;
+    }
+
+    this.deviceService.getMachinesAndProperties().subscribe((data) => {
+      this.machines = data.machines;
+      this.properties = data.properties;
     });
-
-    // Load machines and properties for dropdowns.
-    this.deviceService.getMachines().subscribe((data) => (this.machines = data));
-    this.deviceService.getProperties().subscribe((data) => (this.properties = data));
-
-    // Load initial device data and chart statistics.
-    this.loadData();
-    this.fetchAndUpdateWizardData();
   }
+
+  // loadDropdownData(): void {
+  //   this.deviceService.getMachines().subscribe((data) => (this.machines = data));
+  //   this.deviceService.getProperties().subscribe((data) => (this.properties = data));
+  // }
 
   // Fetch filtered device data for the grid.
   loadData(): void {
@@ -107,14 +114,14 @@ export class DeviceComponent implements OnInit {
     };
   }
 
-  // Fetch daily statistics and update the Chart Wizard data.
+  // Fetch Aggregate Values and update the Chart Wizard data.
   fetchAndUpdateWizardData(): void {
-    this.deviceService.getDailyStatistics(
+    this.deviceService.getAggregateValues(
       this.filters.machine,
       this.filters.property,
       this.filters.startDate,
       this.filters.endDate
-    ).subscribe((stats: DailyDeviceStatistics[]) => {
+    ).subscribe((stats: AggregateValues[]) => {
       const dataColumns: DataColumn[] = [
         { field: 'Date', title: 'Date' },
         { field: 'AvgValue', title: 'Avg Value' },
@@ -122,16 +129,16 @@ export class DeviceComponent implements OnInit {
         { field: 'MaxValue', title: 'Max value' },
       ];
 
-      this.date = stats.map(stat => stat.date);
+      this.date = stats.map(stat => stat.date.toString().split('T')[0]);
       this.minValue = stats.map(stat => stat.minValue);
       this.maxValue = stats.map(stat => stat.maxValue);
       this.avgValue = stats.map(stat => stat.avgValue);
 
-      // Map the daily statistics to the DataRow format expected by the chart.
+      // Map the Aggregate Values to the DataRow format expected by the chart.
       const dataRows: DataRow[] = stats.map((stat, index) => ({
         dataItem: {
           ID: index, // Using index as a unique identifier.
-          Date: stat.date,
+          Date: stat.date.toString().split('T')[0],
           AvgValue: stat.avgValue,
           MinValue: stat.minValue,
           MaxValue: stat.maxValue
@@ -149,7 +156,7 @@ export class DeviceComponent implements OnInit {
     this.updateGrid();
   }
 
-  // Apply filters to reload grid data and update chart statistics.
+  // Apply filters to reload grid data and update chart values.
   applyFilters(): void {
     this.deviceService
       .getFilteredData(
@@ -166,7 +173,8 @@ export class DeviceComponent implements OnInit {
         this.updateGrid();
       });
     this.fetchAndUpdateWizardData();
-    this.columnChartTitle = `[Machine: ${this.filters.machine}] [Property: ${this.filters.property}] Value vs Date Range`
+    // this.columnChartTitle = `[Machine: ${this.filters.machine}] [Property: ${this.filters.property}] Value vs Date Range`
+    this.columnChartTitle = `Values vs Date`
   }
 
   // Reset filters to defaults and reload data.

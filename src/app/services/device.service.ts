@@ -2,10 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_ENDPOINTS } from '../constants/api.constants'; 
-import { Device } from '../model/device.interface'; 
-import { catchError } from 'rxjs';
-import { throwError } from 'rxjs';
-import { DailyDeviceStatistics } from '../model/daily-device-statistics.interface';
+import { AggregateValues } from '../model/aggregate-values.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +10,7 @@ import { DailyDeviceStatistics } from '../model/daily-device-statistics.interfac
 export class DeviceService {
   private readonly apiUrl = API_ENDPOINTS.device; 
 
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
 
   // getDevices(): Observable<Device[]> {
   //   return this.http.get<Device[]>(this.apiUrl).pipe(
@@ -24,14 +21,19 @@ export class DeviceService {
   //   );
   // }
 
-  getMachines(): Observable<string[]> {
-    const getUrl = `${this.apiUrl}/machines`;
-    return this.http.get<string[]>(getUrl);
-  }
+  // getMachines(): Observable<string[]> {
+  //   const getUrl = `${this.apiUrl}/machines`;
+  //   return this.http.get<string[]>(getUrl);
+  // }
 
-  getProperties(): Observable<string[]> {
-    const getUrl = `${this.apiUrl}/properties`;
-    return this.http.get<string[]>(getUrl);
+  // getProperties(): Observable<string[]> {
+  //   const getUrl = `${this.apiUrl}/properties`;
+  //   return this.http.get<string[]>(getUrl);
+  // }
+
+  getMachinesAndProperties(): Observable<{ machines: string[], properties: string[] }> {
+    const getUrl = `${this.apiUrl}/machines-properties`;
+    return this.http.get<{ machines: string[], properties: string[] }>(getUrl);
   }
 
   getFilteredData(
@@ -63,12 +65,12 @@ export class DeviceService {
     return this.http.get<any[]>(getUrl, { params });
   }  
 
-  getDailyStatistics(
+  getAggregateValues(
     machine: string,
     property: string,
     startDate: Date | null,
     endDate: Date | null
-  ): Observable<DailyDeviceStatistics[]> {
+  ): Observable<AggregateValues[]> {
     let params = new HttpParams()
       .set('machine', machine)
       .set('property', property);
@@ -83,7 +85,7 @@ export class DeviceService {
       params = params.set('endDate', localEndDate.toISOString().split('T')[0]); 
     }
   
-    return this.http.get<DailyDeviceStatistics[]>(`${this.apiUrl}/daily-statistics`, { params });
+    return this.http.get<AggregateValues[]>(`${this.apiUrl}/aggregate-values`, { params });
   }
   
 }
